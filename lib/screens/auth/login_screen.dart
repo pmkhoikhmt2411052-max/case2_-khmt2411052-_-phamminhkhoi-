@@ -1,3 +1,4 @@
+import '../tasks/task_list_screen.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../services/api_client.dart';
@@ -26,9 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
         final data = jsonDecode(response.body);
         await ApiClient.saveToken(data['token']);
         
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng nhập thành công!')));
-        }
+        if (mounted) { Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const TaskListScreen())); }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sai email hoặc mật khẩu')));
