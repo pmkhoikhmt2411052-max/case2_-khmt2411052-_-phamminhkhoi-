@@ -3,7 +3,7 @@ import '../../models/task.dart';
 import '../../services/task_service.dart';
 import '../../utils/constants.dart';
 import '../../widgets/task_card.dart';
-
+import 'task_form_screen.dart';
 class TaskDetailScreen extends StatefulWidget {
   final String taskId;
   const TaskDetailScreen({super.key, required this.taskId});
@@ -38,7 +38,37 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chi tiết công việc')),
+      appBar: AppBar(
+        title: const Text('Chi tiết công việc'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () async {
+              // Chuyển sang form Sửa (có truyền ID)
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TaskFormScreen(taskId: widget.taskId)),
+              );
+              // Nếu sửa thành công, tải lại trang chi tiết
+              if (result == true) {
+                setState(() {
+                  _future = TaskService().getTaskById(widget.taskId);
+                });
+              }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              // Gọi API xóa công việc
+              await TaskService().deleteTask(widget.taskId);
+              if (context.mounted) {
+                Navigator.pop(context, true); // Xóa xong thì thoát ra màn hình ngoài
+              }
+            },
+          ),
+        ],
+      ),
       body: FutureBuilder<Task>(
         future: _future,
         builder: (context, snapshot) {
@@ -75,7 +105,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 'Người được chia sẻ',
                 t.shares
                     .map((s) =>
-                        '${s.user?.fullName ?? '?'} (${roleLabels[s.permission] ?? s.permission})')
+                '${s.user?.fullName ?? '?'} (${roleLabels[s.permission] ?? s.permission})')
                     .join(', '),
               ),
               _row('Vai trò của bạn', roleLabels[t.myRole] ?? ''),

@@ -6,7 +6,7 @@ import '../../utils/constants.dart';
 import '../../widgets/task_card.dart';
 import '../auth/login_screen.dart';
 import 'task_detail_screen.dart';
-
+import 'task_form_screen.dart';
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
 
@@ -44,7 +44,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const LoginScreen()),
-      (route) => false,
+          (route) => false,
     );
   }
 
@@ -58,6 +58,20 @@ class _TaskListScreenState extends State<TaskListScreen> {
           IconButton(icon: const Icon(Icons.logout), onPressed: _logout),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // Chuyển sang form Tạo mới
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const TaskFormScreen()),
+          );
+          // Nếu form trả về true (đã lưu), thì tải lại danh sách
+          if (result == true) {
+            _load();
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -67,16 +81,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               children: _scopes.entries
                   .map((e) => Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(e.value),
-                          selected: _scope == e.key,
-                          onSelected: (_) {
-                            _scope = e.key;
-                            _load();
-                          },
-                        ),
-                      ))
+                padding: const EdgeInsets.only(right: 8),
+                child: ChoiceChip(
+                  label: Text(e.value),
+                  selected: _scope == e.key,
+                  onSelected: (_) {
+                    _scope = e.key;
+                    _load();
+                  },
+                ),
+              ))
                   .toList(),
             ),
           ),

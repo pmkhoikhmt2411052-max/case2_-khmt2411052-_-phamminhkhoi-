@@ -61,4 +61,39 @@ class ApiClient {
       },
     );
   }
+
+  static Future<http.Response> put(String endpoint, Map<String, dynamic> body) async {
+    final token = await getToken();
+    return await http.put(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+  }
+
+  static Future<http.Response> patch(String endpoint, Map<String, dynamic> body) async {
+    final token = await getToken();
+    return await http.patch(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+  }
+
+  static Future<http.Response> delete(String endpoint) async {
+    final token = await getToken();
+    return await http.delete(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
+    );
+  }
 }
