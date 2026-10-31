@@ -4,6 +4,8 @@ import '../../services/task_service.dart';
 import '../../utils/constants.dart';
 import '../../widgets/task_card.dart';
 import 'task_form_screen.dart';
+import 'assign_task_screen.dart';
+import 'share_task_screen.dart';
 class TaskDetailScreen extends StatefulWidget {
   final String taskId;
   const TaskDetailScreen({super.key, required this.taskId});
@@ -109,6 +111,42 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     .join(', '),
               ),
               _row('Vai trò của bạn', roleLabels[t.myRole] ?? ''),
+              if (t.myRole == 'owner') ...[
+                const Divider(height: 32),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.person_add_alt_1),
+                  label: const Text('Giao việc'),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AssignTaskScreen(taskId: t.id),
+                      ),
+                    );
+                    if (!mounted) return;
+                    setState(() {
+                      _future = TaskService().getTaskById(widget.taskId);
+                    });
+                  },
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.share),
+                  label: const Text('Chia sẻ'),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ShareTaskScreen(taskId: t.id),
+                      ),
+                    );
+                    if (!mounted) return;
+                    setState(() {
+                      _future = TaskService().getTaskById(widget.taskId);
+                    });
+                  },
+                ),
+              ],
             ],
           );
         },
