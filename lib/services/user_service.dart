@@ -11,4 +11,16 @@ class UserService {
         .map((e) => User.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  // Bổ sung: Đổi mật khẩu tài khoản
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    await apiRequest(
+      'PUT',
+      '/auth/change-password',
+      body: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+    );
+  }
 }
