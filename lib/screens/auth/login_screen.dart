@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../services/api_client.dart';
 import '../tasks/task_list_screen.dart';
+import 'register_screen.dart'; // Thêm import màn hình đăng ký
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -195,6 +195,21 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Nút chuyển sang màn hình Đăng ký
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text('Chưa có tài khoản? Đăng ký ngay'),
                         ),
                       ],
                     ),
