@@ -1,6 +1,7 @@
 const Map<String, String> statusLabels = {
   'todo': 'Chưa thực hiện',
   'in_progress': 'Đang thực hiện',
+  'pending_confirm': 'Chờ xác nhận',
   'completed': 'Đã hoàn thành',
 };
 

@@ -74,4 +74,12 @@ class TaskService {
     );
     return _unwrap(response.body);
   }
+  // 6. Đổi trạng thái: 'in_progress' | 'pending_confirm' | 'completed'
+  Future<dynamic> updateStatus(String taskId, String status) async {
+    final response = await ApiClient.patch(
+      '/tasks/$taskId/status',
+      {'status': status},
+    );
+    return _unwrap(response.body);
+  }
 }

@@ -6,6 +6,7 @@ import '../../widgets/task_card.dart';
 import 'task_form_screen.dart';
 import 'assign_task_screen.dart';
 import 'share_task_screen.dart';
+
 class TaskDetailScreen extends StatefulWidget {
   final String taskId;
   const TaskDetailScreen({super.key, required this.taskId});
@@ -35,6 +36,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
         ],
       ),
     );
+  }
+
+  // Báo hoàn thành / xác nhận / yêu cầu làm lại
+  Future<void> _changeStatus(String status) async {
+    try {
+      await TaskService().updateStatus(widget.taskId, status);
+      if (!mounted) return;
+      setState(() {
+        _future = TaskService().getTaskById(widget.taskId);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(errorText(e))));
+    }
   }
 
   @override
@@ -111,6 +127,34 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     .join(', '),
               ),
               _row('Vai trò của bạn', roleLabels[t.myRole] ?? ''),
+
+              // Người được giao: báo hoàn thành
+              if (t.myRole == 'assignee' &&
+                  t.status != 'pending_confirm' &&
+                  t.status != 'completed') ...[
+                const Divider(height: 32),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.check),
+                  label: const Text('Báo hoàn thành'),
+                  onPressed: () => _changeStatus('pending_confirm'),
+                ),
+              ],
+
+              // Người tạo: xác nhận hoặc yêu cầu làm lại
+              if (t.myRole == 'owner' && t.status == 'pending_confirm') ...[
+                const Divider(height: 32),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.verified),
+                  label: const Text('Xác nhận hoàn thành'),
+                  onPressed: () => _changeStatus('completed'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton(
+                  onPressed: () => _changeStatus('in_progress'),
+                  child: const Text('Yêu cầu làm lại'),
+                ),
+              ],
+
               if (t.myRole == 'owner') ...[
                 const Divider(height: 32),
                 OutlinedButton.icon(
